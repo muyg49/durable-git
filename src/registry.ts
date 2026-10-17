@@ -30,13 +30,13 @@ export class Registry extends DurableObject<Env> {
         desc TEXT NOT NULL DEFAULT '',
         owner TEXT NOT NULL DEFAULT '',
         section TEXT NOT NULL DEFAULT '',
-        priv INTEGER NOT NULL DEFAULT 0,
+        priv INTEGER NOT NULL DEFAULT 1,
         idle INTEGER NOT NULL DEFAULT 0,
         ver INTEGER NOT NULL DEFAULT 1
       );
     `);
     // upgrade path for databases created by earlier versions
-    for (const col of ["section TEXT NOT NULL DEFAULT ''", "priv INTEGER NOT NULL DEFAULT 0", "ver INTEGER NOT NULL DEFAULT 1"]) {
+    for (const col of ["section TEXT NOT NULL DEFAULT ''", "priv INTEGER NOT NULL DEFAULT 1", "ver INTEGER NOT NULL DEFAULT 1"]) {
       try {
         ctx.storage.sql.exec(`ALTER TABLE repos ADD COLUMN ${col}`);
       } catch {
@@ -46,10 +46,12 @@ export class Registry extends DurableObject<Env> {
   }
 
   upsert(name: string, idle: number): void {
-    // seed ver from the clock so a deleted-and-recreated repo never reuses
-    // cache-key versions from its previous incarnation
+    // New repositories are private by default. Existing repositories keep
+    // their current privacy setting when later pushes update the registry row.
+    // Seed ver from the clock so a deleted-and-recreated repo never reuses
+    // cache-key versions from its previous incarnation.
     this.ctx.storage.sql.exec(
-      "INSERT INTO repos (name, idle, ver) VALUES (?, ?, ?) ON CONFLICT(name) DO UPDATE SET idle = excluded.idle, ver = ver + 1",
+      "INSERT INTO repos (name, priv, idle, ver) VALUES (?, 1, ?, ?) ON CONFLICT(name) DO UPDATE SET idle = excluded.idle, ver = ver + 1",
       name,
       idle,
       Date.now()
