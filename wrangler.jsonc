@@ -22,11 +22,12 @@
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["RepoCell", "Registry"] }
   ],
-  // Optional: with PACK_CACHE bound, pushed pack bytes are stored in R2 (off the
-  // DO's SQLite) and full clones are served straight from R2 by the Worker.
-  // Remove this binding to fall back to the SQLite-only path (as on celld).
+  // Wrangler 4.45+ automatically provisions and links an R2 bucket when a
+  // binding is declared without a bucket_name. The resource remains linked
+  // across future deploys, so Git-connected Cloudflare Builds need no manual
+  // `wrangler r2 bucket create` step.
   "r2_buckets": [
-    { "binding": "PACK_CACHE", "bucket_name": "dgit-pack-cache" }
+    { "binding": "PACK_CACHE" }
   ],
   "vars": {
     "SITE_NAME": "git.muyg.cc",
