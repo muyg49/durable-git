@@ -20,12 +20,11 @@
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["RepoCell", "Registry"] }
   ],
-  // Wrangler 4.45+ automatically provisions and links an R2 bucket when a
-  // binding is declared without a bucket_name. The resource remains linked
-  // across future deploys, so Git-connected Cloudflare Builds need no manual
-  // `wrangler r2 bucket create` step.
+  // This bucket was created by Wrangler's automatic provisioning on the first
+  // deployment attempt. Bind it explicitly now so subsequent CI deploys reuse
+  // the existing bucket instead of trying to create it again.
   "r2_buckets": [
-    { "binding": "PACK_CACHE" }
+    { "binding": "PACK_CACHE", "bucket_name": "durable-git-pack-cache" }
   ],
   "vars": {
     "SITE_NAME": "git.muyg.cc",
