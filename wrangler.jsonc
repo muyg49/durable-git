@@ -7,7 +7,7 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-08-01",
   "routes": [
-    { "pattern": "git.littledivy.com", "custom_domain": true }
+    { "pattern": "git.muyg.cc", "custom_domain": true }
   ],
   "limits": {
     // pack indexing of a large push is CPU-bound; 5 minutes is the paid-plan max
@@ -29,9 +29,9 @@
     { "binding": "PACK_CACHE", "bucket_name": "dgit-pack-cache" }
   ],
   "vars": {
-    "SITE_NAME": "git.littledivy.com",
+    "SITE_NAME": "git.muyg.cc",
     "SITE_DESC": "a fast webinterface for the git dscm, on Cloudflare",
-    "SITE_OWNER": "divy"
+    "SITE_OWNER": "muyg"
   }
   // Push auth: run `wrangler secret put GIT_TOKEN` (use .dev.vars locally).
 }
