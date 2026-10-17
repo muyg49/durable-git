@@ -49,15 +49,21 @@ the push token.
 
 ```sh
 npm install
-npx wrangler r2 bucket create dgit-pack-cache   # optional: R2 pack offload + clone cache
 npx wrangler deploy
 npx wrangler secret put GIT_TOKEN   # the push password
 ```
 
-The `PACK_CACHE` R2 binding in `wrangler.jsonc` is optional: with it,
-pushed pack bytes live in R2 (off the cell's SQLite) and full clones are
-served straight from R2 by the Worker without loading the cell. Remove
-the binding and everything falls back to the SQLite-only path.
+With Wrangler 4.45 or newer, the `PACK_CACHE` binding in `wrangler.jsonc`
+is automatically provisioned as an R2 bucket on the first deployment.
+No separate `wrangler r2 bucket create` command is required. When the
+repository is deployed through Cloudflare's Git integration, Cloudflare
+creates and links the bucket during deployment and keeps that resource
+linked on subsequent deploys.
+
+The R2 binding is optional in upstream dgit, but this fork enables it by
+default so pushed pack bytes live in R2 (off the cell's SQLite) and full
+clones can be served straight from R2 by the Worker without loading the
+cell.
 
 Then push anything:
 
